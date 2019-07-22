@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 @Service
 @Log4j2
-class ProcessDataSetService {
+public class ProcessDataSetService {
 
     private final ClassificationService classificationService;
 
@@ -22,7 +22,7 @@ class ProcessDataSetService {
         this.classificationService = classificationService;
     }
 
-    JSONObject process(URL url) throws IOException {
+    public JSONObject processDataSet(URL url) throws IOException {
         log.info("Processing log data from " + url);
         HashMap<String, String> classification = new HashMap<>();
 

@@ -31,7 +31,7 @@ public class ProcessDataSetServiceTest {
         JSONObject classification = new JSONObject();
         URL res = getClass().getClassLoader().getResource("com.widget.quality.control/log1");
         try {
-            classification = processDataSetService.process(res);
+            classification = processDataSetService.processDataSet(res);
         } catch (IOException e) {
             e.printStackTrace();
         }
