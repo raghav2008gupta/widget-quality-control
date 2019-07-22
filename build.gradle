@@ -1,6 +1,7 @@
 buildscript {
     ext {
         spring_boot_version = "2.1.6.RELEASE"
+        junit_version = "4.12"
     }
 
     repositories {
@@ -21,14 +22,17 @@ apply plugin: "io.spring.dependency-management"
 repositories {
     mavenCentral()
     jcenter()
+    maven { url "https://repo.spring.io/plugins-release/" }
 }
 
 dependencies {
     compile (
-            "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
+            "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}",
+            "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}",
     )
-
+    
     testCompile (
+            "junit:junit:${junit_version}",
             "org.springframework.boot:spring-boot-starter-test:${spring_boot_version}"
     )
 }
