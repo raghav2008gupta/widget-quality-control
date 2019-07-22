@@ -5,6 +5,7 @@ buildscript {
         commons_lang3_version = "3.9"
         commons_math3_version = "3.6.1"
         lombok_version = "1.18.8"
+        json_version = "20180813"
     }
 
     repositories {
@@ -34,7 +35,8 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}",
             "org.apache.commons:commons-lang3:${commons_lang3_version}",
             "org.apache.commons:commons-math3:${commons_math3_version}",
-            "org.projectlombok:lombok:${lombok_version}"
+            "org.projectlombok:lombok:${lombok_version}",
+            "org.json:json:${json_version}"
     )
 
     annotationProcessor (
