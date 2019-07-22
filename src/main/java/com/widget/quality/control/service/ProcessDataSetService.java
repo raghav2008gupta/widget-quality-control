@@ -1,5 +1,6 @@
 package com.widget.quality.control.service;
 
+import com.widget.quality.control.service.classification.ClassificationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,10 @@ import org.json.JSONObject;
 @Log4j2
 class ProcessDataSetService {
 
-    private final ClassificationService classifierService;
+    private final ClassificationService classificationService;
 
-    public ProcessDataSetService(ClassificationService classifierService) {
-        this.classifierService = classifierService;
+    public ProcessDataSetService(ClassificationService classificationService) {
+        this.classificationService = classificationService;
     }
 
     JSONObject process(URL url) throws IOException {
@@ -56,7 +57,7 @@ class ProcessDataSetService {
                     }
 
                     if (!sensorName.isEmpty()) {
-                        classification.put(sensorName, classifierService.classify(sensorType, readings,
+                        classification.put(sensorName, classificationService.classify(sensorType, readings,
                                 referenceValues.get(sensorType)));
                     }
                     sensorType = newSensorType;
@@ -72,7 +73,7 @@ class ProcessDataSetService {
                 }
             }
             if (!sensorName.isEmpty()) {
-                classification.put(sensorName, classifierService.classify(sensorType, readings,
+                classification.put(sensorName, classificationService.classify(sensorType, readings,
                         referenceValues.get(sensorType)));
             }
 

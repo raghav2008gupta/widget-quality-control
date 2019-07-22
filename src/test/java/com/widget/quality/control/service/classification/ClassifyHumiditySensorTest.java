@@ -1,4 +1,4 @@
-package com.widget.quality.control.service;
+package com.widget.quality.control.service.classification;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

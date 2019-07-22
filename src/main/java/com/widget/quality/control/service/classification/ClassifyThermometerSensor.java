@@ -1,4 +1,4 @@
-package com.widget.quality.control.service;
+package com.widget.quality.control.service.classification;
 
 import com.widget.quality.control.model.Classifier;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-package com.widget.quality.control.service;
+package com.widget.quality.control.service.classification;
 
 import com.widget.quality.control.model.Classifier;
 import lombok.extern.log4j.Log4j2;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Log4j2
 public class ClassificationService {
 
-    String classify(String sensorType, ArrayList<Float> readings, Float reference) {
+    public String classify(String sensorType, ArrayList<Float> readings, Float reference) {
         String classification = "";
         if (sensorType != null && reference != null && !readings.isEmpty()) {
             String className = "Classify" + StringUtils.capitalize(sensorType.toLowerCase()) + "Sensor";
