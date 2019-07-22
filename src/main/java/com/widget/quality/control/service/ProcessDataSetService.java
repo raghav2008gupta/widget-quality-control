@@ -1,6 +1,5 @@
 package com.widget.quality.control.service;
 
-import com.widget.quality.control.model.WidgetType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -27,33 +26,40 @@ class ProcessDataSetService {
         HashMap<String, String> classification = new HashMap<>();
 
         try (
-                Scanner sc = new Scanner(url.openStream())
+                Scanner scanner = new Scanner(url.openStream())
         ) {
-            ArrayList<Float> readings = new ArrayList<>();
-
-            HashMap<WidgetType, Float> referenceValues = new HashMap<>();
-
+            List<String> splittedLine;
+            List<String> references = new ArrayList<>();
+            int numSensors = 1;
+            String newWidgetType;
+            HashMap<String, Float> referenceValues = new HashMap<>();
+            String widgetType = null;
             String widgetName = "";
-            WidgetType widgetType = null;
+            ArrayList<Float> readings = new ArrayList<>();
 
             Predicate<String> dateTime = Pattern.compile(
                     "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))T(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$"
             ).asPredicate();
 
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                List<String> splittedLine = Arrays.asList(line.split(" "));
+            while (scanner.hasNextLine()) {
+                splittedLine = Arrays.asList(scanner.nextLine().split(" "));
                 if (splittedLine.stream().anyMatch("reference"::equalsIgnoreCase)) {
-                    for (int i = 1; i < splittedLine.size(); i++) {
-                        referenceValues.put(WidgetType.values()[i - 1], Float.parseFloat(splittedLine.get(i)));
+                    references = splittedLine;
+                } else if (splittedLine.stream().noneMatch(dateTime)) {
+                    newWidgetType = splittedLine.get(0).toLowerCase();
+
+                    if (!referenceValues.containsKey(splittedLine.get(0).toLowerCase())) {
+                        referenceValues.put(
+                                newWidgetType,
+                                Float.parseFloat(references.get(numSensors++))
+                        );
                     }
-                    log.info(referenceValues.keySet());
-                } else if (splittedLine.stream().anyMatch(Arrays.toString(WidgetType.values()).toLowerCase()::contains)) {
+
                     if (!widgetName.isEmpty()) {
                         classification.put(widgetName, classifierService.classify(widgetType, readings,
-                                referenceValues));
+                                referenceValues.get(widgetType)));
                     }
-                    widgetType = WidgetType.valueOf(splittedLine.get(0).toUpperCase());
+                    widgetType = newWidgetType;
                     widgetName = splittedLine.get(1);
                     readings = new ArrayList<>();
                     log.info("Found " + widgetType + ": " + widgetName);
@@ -61,12 +67,13 @@ class ProcessDataSetService {
                     readings.add(Float.parseFloat(splittedLine.get(1)));
                 }
                 // note that Scanner suppresses exceptions
-                if (sc.ioException() != null) {
-                    throw sc.ioException();
+                if (scanner.ioException() != null) {
+                    throw scanner.ioException();
                 }
             }
             if (!widgetName.isEmpty()) {
-                classification.put(widgetName, classifierService.classify(widgetType, readings, referenceValues));
+                classification.put(widgetName, classifierService.classify(widgetType, readings,
+                        referenceValues.get(widgetType)));
             }
 
         }

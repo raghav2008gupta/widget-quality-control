@@ -36,7 +36,7 @@ public class ProcessDataSetServiceTest {
             e.printStackTrace();
         }
 
-//        System.out.println(classification.toString(4));
+        System.out.println(classification.toString(4));
         JSONAssert.assertEquals(expected, classification, true);
     }
 
