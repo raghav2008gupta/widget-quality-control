@@ -6,15 +6,18 @@ buildscript {
         commons_math3_version = "3.6.1"
         lombok_version = "1.18.8"
         json_version = "20180813"
+        docker_spring_boot_application_version = "4.10.0"
     }
 
     repositories {
         mavenCentral()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
+        classpath "com.bmuschko.docker-spring-boot-application:com.bmuschko.docker-spring-boot-application.gradle.plugin:${docker_spring_boot_application_version}"
     }
 }
 
@@ -22,6 +25,7 @@ apply plugin: "idea"
 apply plugin: "java"
 apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
+apply plugin: "com.bmuschko.docker-spring-boot-application"
 
 repositories {
     mavenCentral()
@@ -30,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    compile (
+    compile(
             "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}",
             "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}",
             "org.apache.commons:commons-lang3:${commons_lang3_version}",
@@ -39,16 +43,33 @@ dependencies {
             "org.json:json:${json_version}"
     )
 
-    annotationProcessor (
+    annotationProcessor(
             "org.projectlombok:lombok:${lombok_version}"
     )
 
-    testCompile (
+    testCompile(
             "junit:junit:${junit_version}",
             "org.springframework.boot:spring-boot-starter-test:${spring_boot_version}"
     )
 }
 
-wrapper{
+jar {
+    dependsOn(compileJava, compileTestJava)
+    manifest {
+        attributes 'Main-Class': 'com.widget.quality.control'
+        archivesBaseName = "365-Widgets"
+    }
+}
+
+docker {
+    springBootApplication {
+        baseImage = 'openjdk:8-alpine'
+        ports = [8080, 9000]
+        tag = "365-widgets:0.0.1"
+        jvmArgs = ['-Xmx512m']
+    }
+}
+
+wrapper {
     gradleVersion = "5.5.1"
 }
