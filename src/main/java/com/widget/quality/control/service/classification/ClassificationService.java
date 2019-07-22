@@ -1,9 +1,7 @@
 package com.widget.quality.control.service.classification;
 
-import com.widget.quality.control.model.Classifier;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 
@@ -11,18 +9,16 @@ import java.util.ArrayList;
 @Log4j2
 public class ClassificationService {
 
+    private final ClassificationFactory classificationFactory;
+
+    public ClassificationService(ClassificationFactory classificationFactory) {
+        this.classificationFactory = classificationFactory;
+    }
+
     public String classify(String sensorType, ArrayList<Float> readings, Float reference) {
         String classification = "";
         if (sensorType != null && reference != null && !readings.isEmpty()) {
-            String className = "Classify" + StringUtils.capitalize(sensorType.toLowerCase()) + "Sensor";
-            log.debug("Calling " + className + " to process readings for " + sensorType);
-            try {
-                Object classifier =
-                        Class.forName(this.getClass().getPackage().getName() + "." + className).newInstance();
-                classification = ((Classifier) classifier).execute(readings, reference);
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            classification = classificationFactory.getClassifier(sensorType).execute(readings, reference);
         }
         return classification;
     }
