@@ -1,4 +1,4 @@
-package com.widget.quality.control.model;
+package com.widget.quality.control.service.classification;
 
 import java.util.ArrayList;
 

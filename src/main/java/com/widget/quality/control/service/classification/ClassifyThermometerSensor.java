@@ -1,6 +1,5 @@
 package com.widget.quality.control.service.classification;
 
-import com.widget.quality.control.model.Classifier;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.springframework.stereotype.Service;
