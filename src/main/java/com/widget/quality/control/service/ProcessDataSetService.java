@@ -15,9 +15,9 @@ import org.json.JSONObject;
 @Log4j2
 class ProcessDataSetService {
 
-    private final ClassifierService classifierService;
+    private final ClassificationService classifierService;
 
-    public ProcessDataSetService(ClassifierService classifierService) {
+    public ProcessDataSetService(ClassificationService classifierService) {
         this.classifierService = classifierService;
     }
 
@@ -31,10 +31,10 @@ class ProcessDataSetService {
             List<String> splittedLine;
             List<String> references = new ArrayList<>();
             int numSensors = 1;
-            String newWidgetType;
+            String newSensorType;
             HashMap<String, Float> referenceValues = new HashMap<>();
-            String widgetType = null;
-            String widgetName = "";
+            String sensorType = null;
+            String sensorName = "";
             ArrayList<Float> readings = new ArrayList<>();
 
             Predicate<String> dateTime = Pattern.compile(
@@ -46,23 +46,23 @@ class ProcessDataSetService {
                 if (splittedLine.stream().anyMatch("reference"::equalsIgnoreCase)) {
                     references = splittedLine;
                 } else if (splittedLine.stream().noneMatch(dateTime)) {
-                    newWidgetType = splittedLine.get(0).toLowerCase();
+                    newSensorType = splittedLine.get(0).toLowerCase();
 
                     if (!referenceValues.containsKey(splittedLine.get(0).toLowerCase())) {
                         referenceValues.put(
-                                newWidgetType,
+                                newSensorType,
                                 Float.parseFloat(references.get(numSensors++))
                         );
                     }
 
-                    if (!widgetName.isEmpty()) {
-                        classification.put(widgetName, classifierService.classify(widgetType, readings,
-                                referenceValues.get(widgetType)));
+                    if (!sensorName.isEmpty()) {
+                        classification.put(sensorName, classifierService.classify(sensorType, readings,
+                                referenceValues.get(sensorType)));
                     }
-                    widgetType = newWidgetType;
-                    widgetName = splittedLine.get(1);
+                    sensorType = newSensorType;
+                    sensorName = splittedLine.get(1);
                     readings = new ArrayList<>();
-                    log.info("Found " + widgetType + ": " + widgetName);
+                    log.info("Found " + sensorType + ": " + sensorName);
                 } else if (splittedLine.stream().anyMatch(dateTime)) {
                     readings.add(Float.parseFloat(splittedLine.get(1)));
                 }
@@ -71,9 +71,9 @@ class ProcessDataSetService {
                     throw scanner.ioException();
                 }
             }
-            if (!widgetName.isEmpty()) {
-                classification.put(widgetName, classifierService.classify(widgetType, readings,
-                        referenceValues.get(widgetType)));
+            if (!sensorName.isEmpty()) {
+                classification.put(sensorName, classifierService.classify(sensorType, readings,
+                        referenceValues.get(sensorType)));
             }
 
         }

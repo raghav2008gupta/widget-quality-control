@@ -9,13 +9,13 @@ import java.util.ArrayList;
 
 @Service
 @Log4j2
-public class ClassifierService {
+public class ClassificationService {
 
-    String classify(String widgetType, ArrayList<Float> readings, Float reference) {
+    String classify(String sensorType, ArrayList<Float> readings, Float reference) {
         String classification = "";
-        if (widgetType != null && reference != null && !readings.isEmpty()) {
-            String className = "Classify" + StringUtils.capitalize(widgetType.toLowerCase()) + "Sensor";
-            log.debug("Calling " + className + " to process readings for " + widgetType);
+        if (sensorType != null && reference != null && !readings.isEmpty()) {
+            String className = "Classify" + StringUtils.capitalize(sensorType.toLowerCase()) + "Sensor";
+            log.debug("Calling " + className + " to process readings for " + sensorType);
             try {
                 Object classifier =
                         Class.forName(this.getClass().getPackage().getName() + "." + className).newInstance();
