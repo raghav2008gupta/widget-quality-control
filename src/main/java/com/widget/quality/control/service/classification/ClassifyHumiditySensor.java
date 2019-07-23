@@ -12,7 +12,10 @@ import java.util.function.Predicate;
 public class ClassifyHumiditySensor implements Classifier {
 
     @Override
-    public String execute(ArrayList<Float> readings, float reference) {
+    public String execute(ArrayList<Float> readings, float reference) throws IllegalArgumentException {
+        if (readings.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         String sensorClassification = "keep";
         Range<Float> range = Range.between(reference - (0.01f * reference), reference + (0.01f * reference));
         if (readings.stream().anyMatch(((Predicate<Float>) range::contains).negate())) {

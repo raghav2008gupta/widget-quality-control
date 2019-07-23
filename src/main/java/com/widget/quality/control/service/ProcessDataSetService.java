@@ -26,57 +26,53 @@ public class ProcessDataSetService {
         log.info("Processing log data from " + url);
         HashMap<String, String> classification = new HashMap<>();
 
-        try (
-                Scanner scanner = new Scanner(url.openStream())
-        ) {
-            List<String> splittedLine;
-            List<String> references = new ArrayList<>();
-            int numSensors = 1;
-            String newSensorType;
-            HashMap<String, Float> referenceValues = new HashMap<>();
-            String sensorType = null;
-            String sensorName = "";
-            ArrayList<Float> readings = new ArrayList<>();
+        Scanner scanner = new Scanner(url.openStream());
+        List<String> splittedLine;
+        List<String> references = new ArrayList<>();
+        int numSensors = 1;
+        String newSensorType;
+        HashMap<String, Float> referenceValues = new HashMap<>();
+        String sensorType = null;
+        String sensorName = "";
+        ArrayList<Float> readings = new ArrayList<>();
 
-            Predicate<String> dateTime = Pattern.compile(
-                    "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))T(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$"
-            ).asPredicate();
+        Predicate<String> dateTime = Pattern.compile(
+                "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))T(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$"
+        ).asPredicate();
 
-            while (scanner.hasNextLine()) {
-                splittedLine = Arrays.asList(scanner.nextLine().split(" "));
-                if (splittedLine.stream().anyMatch("reference"::equalsIgnoreCase)) {
-                    references = splittedLine;
-                } else if (splittedLine.stream().noneMatch(dateTime)) {
-                    newSensorType = splittedLine.get(0).toLowerCase();
+        while (scanner.hasNextLine()) {
+            splittedLine = Arrays.asList(scanner.nextLine().split(" "));
+            if (splittedLine.stream().anyMatch("reference"::equalsIgnoreCase)) {
+                references = splittedLine;
+            } else if (splittedLine.stream().noneMatch(dateTime)) {
+                newSensorType = splittedLine.get(0).toLowerCase();
 
-                    if (!referenceValues.containsKey(splittedLine.get(0).toLowerCase())) {
-                        referenceValues.put(
-                                newSensorType,
-                                Float.parseFloat(references.get(numSensors++))
-                        );
-                    }
-
-                    if (!sensorName.isEmpty()) {
-                        classification.put(sensorName, classificationService.classify(sensorType, readings,
-                                referenceValues.get(sensorType)));
-                    }
-                    sensorType = newSensorType;
-                    sensorName = splittedLine.get(1);
-                    readings = new ArrayList<>();
-                    log.info("Found " + sensorType + ": " + sensorName);
-                } else if (splittedLine.stream().anyMatch(dateTime)) {
-                    readings.add(Float.parseFloat(splittedLine.get(1)));
+                if (!referenceValues.containsKey(splittedLine.get(0).toLowerCase())) {
+                    referenceValues.put(
+                            newSensorType,
+                            Float.parseFloat(references.get(numSensors++))
+                    );
                 }
-                // note that Scanner suppresses exceptions
-                if (scanner.ioException() != null) {
-                    throw scanner.ioException();
-                }
-            }
-            if (!sensorName.isEmpty()) {
-                classification.put(sensorName, classificationService.classify(sensorType, readings,
-                        referenceValues.get(sensorType)));
-            }
 
+                if (!sensorName.isEmpty()) {
+                    classification.put(sensorName, classificationService.classify(sensorType, readings,
+                            referenceValues.get(sensorType)));
+                }
+                sensorType = newSensorType;
+                sensorName = splittedLine.get(1);
+                readings = new ArrayList<>();
+                log.info("Found " + sensorType + ": " + sensorName);
+            } else if (splittedLine.stream().anyMatch(dateTime)) {
+                readings.add(Float.parseFloat(splittedLine.get(1)));
+            }
+            // note that Scanner suppresses exceptions
+            if (scanner.ioException() != null) {
+                throw scanner.ioException();
+            }
+        }
+        if (!sensorName.isEmpty()) {
+            classification.put(sensorName, classificationService.classify(sensorType, readings,
+                    referenceValues.get(sensorType)));
         }
 
         log.info(classification.toString());

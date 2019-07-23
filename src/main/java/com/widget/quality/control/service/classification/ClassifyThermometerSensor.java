@@ -12,7 +12,10 @@ import java.util.DoubleSummaryStatistics;
 public class ClassifyThermometerSensor implements Classifier {
 
     @Override
-    public String execute(ArrayList<Float> readings, float reference) {
+    public String execute(ArrayList<Float> readings, float reference) throws IllegalArgumentException {
+        if (readings.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         String sensorClassification = "precise";
         DoubleSummaryStatistics summaryStatistics = readings.stream().mapToDouble(a -> a).summaryStatistics();
         float mean = (float) summaryStatistics.getAverage();

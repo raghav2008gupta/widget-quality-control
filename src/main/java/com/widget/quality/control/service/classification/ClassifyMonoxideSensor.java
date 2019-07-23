@@ -12,7 +12,10 @@ import java.util.function.Predicate;
 public class ClassifyMonoxideSensor implements Classifier {
 
     @Override
-    public String execute(ArrayList<Float> readings, float reference) {
+    public String execute(ArrayList<Float> readings, float reference) throws IllegalArgumentException {
+        if (readings.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         String sensorClassification = "keep";
         Range<Float> range = Range.between(reference - 3f, reference + 3f);
         if (readings.stream().anyMatch(((Predicate<Float>) range::contains).negate())) {
