@@ -37,6 +37,7 @@ dependencies {
     compile(
             "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}",
             "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}",
+            "org.springframework.boot:spring-boot-starter-security:${spring_boot_version}",
             "org.apache.commons:commons-lang3:${commons_lang3_version}",
             "org.apache.commons:commons-math3:${commons_math3_version}",
             "org.projectlombok:lombok:${lombok_version}",
