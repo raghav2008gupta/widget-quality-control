@@ -40,4 +40,16 @@ public class ProcessDataSetServiceTest {
         JSONAssert.assertEquals(expected, classification, true);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testProcessNullPointerException() throws Exception {
+        URL res = getClass().getClassLoader().getResource("incorrect/path");
+        processDataSetService.processDataSet(res);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testProcessNormalException() throws Exception {
+        URL res = getClass().getClassLoader().getResource("incorrect/path");
+        processDataSetService.processDataSet(res);
+    }
+
 }

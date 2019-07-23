@@ -19,7 +19,7 @@ public class ClassifyMonoxideSensorTest {
     ClassifyMonoxideSensor classifyMonoxideSensor;
 
     @Test
-    public void testExecuteNormalRun() {
+    public void testExecuteNormalRunKeep() {
         String expected = "keep";
 
         ArrayList<Float> readings = new ArrayList<>(Arrays.asList(5f, 7f, 9f));
@@ -27,5 +27,40 @@ public class ClassifyMonoxideSensorTest {
 
         String actual = classifyMonoxideSensor.execute(readings, reference);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testExecuteNormalRunDiscard() {
+        String expected = "discard";
+
+        ArrayList<Float> readings = new ArrayList<>(Arrays.asList(2f, 4f, 10f, 8f, 6f));
+        float reference = 6f;
+
+        String actual = classifyMonoxideSensor.execute(readings, reference);
+        assertEquals(expected, actual);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testExecuteIllegalArgumentException() {
+        ArrayList<Float> readings = new ArrayList<>();
+        float reference = 6f;
+
+        System.out.println(classifyMonoxideSensor.execute(readings, reference));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testExecuteNullPointerException1() {
+        ArrayList<Float> readings = new ArrayList<>(Arrays.asList(2f, 4f, 10f, 8f, 6f));
+        float reference = Float.parseFloat(null);
+
+        classifyMonoxideSensor.execute(readings, reference);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testExecuteNullPointerException2() {
+        ArrayList<Float> readings = new ArrayList<>(null);
+        float reference = 6f;
+
+        classifyMonoxideSensor.execute(readings, reference);
     }
 }
