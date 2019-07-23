@@ -12,11 +12,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
-    @Value("${app.user}")
-    private String user;
+    @Value("${app.user.name}")
+    private String userName;
 
-    @Value("${app.password}")
-    private String password;
+    @Value("${app.user.password}")
+    private String userPassword;
+
+    @Value("${app.admin.name}")
+    private String adminName;
+
+    @Value("${app.admin.password}")
+    private String adminPassword;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception
@@ -29,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(allowedPaths).authenticated()
+                .antMatchers("/actuator/**").hasRole("ADMIN")
                 .antMatchers("/**").denyAll()
                 .and()
                 .httpBasic();
@@ -39,8 +46,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
             throws Exception
     {
         auth.inMemoryAuthentication()
-                .withUser(user)
-                .password("{noop}" + password)
-                .roles("USER");
+                .withUser(userName)
+                .password("{noop}" + userPassword)
+                .roles("USER")
+                .and()
+                .withUser(adminName)
+                .password("{noop}" + adminPassword)
+                .roles("ADMIN");
     }
 }
