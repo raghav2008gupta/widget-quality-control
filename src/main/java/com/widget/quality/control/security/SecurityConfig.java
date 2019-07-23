@@ -24,6 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         String[] allowedPaths = {"/check-quality"};
 
         http
+                .requiresChannel().anyRequest().requiresSecure()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(allowedPaths).authenticated()

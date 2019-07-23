@@ -65,7 +65,7 @@ jar {
 docker {
     springBootApplication {
         baseImage = 'openjdk:8-alpine'
-        ports = [8080, 9000]
+        ports = [443, 9000]
         tag = "365-widgets:0.0.1"
         jvmArgs = ['-Xmx512m']
     }
